@@ -15,63 +15,76 @@ document.addEventListener('DOMContentLoaded', () => {
   // ============================================
   //   АНИМАЦИЯ НЕОНОВОГО ДОЖДЯ / ЧАСТИЦ (CANVAS)
   // ============================================
-  let particles = [];
+  let particlesArray = [];
+const rootStyles = getComputedStyle(document.documentElement);
+const colorCyan = rootStyles.getPropertyValue('--neon-cyan').trim() || '#00f3ff';
+const colorPink = rootStyles.getPropertyValue('--neon-pink').trim() || '#ff2a85';
 
-  function resizeCanvas() {
-    canvas.width = neonCard.offsetWidth;
-    canvas.height = neonCard.offsetHeight;
+function resizeCanvas() {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas(); // Инициализация
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 1; 
+    this.speedY = Math.random() * 0.5 + 0.2; 
+    this.speedX = (Math.random() - 0.5) * 0.2; 
+    this.color = Math.random() > 0.5 ? colorCyan : colorPink;
+    this.opacity = Math.random() * 0.5 + 0.1;
+    this.fadeDirection = Math.random() > 0.5 ? 0.01 : -0.01;
   }
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
 
-  class RainParticle {
-    constructor() {
-      this.reset();
+  update() {
+    this.y -= this.speedY;
+    this.x += this.speedX;
+
+    this.opacity += this.fadeDirection;
+    if (this.opacity >= 0.8 || this.opacity <= 0.1) {
+      this.fadeDirection = -this.fadeDirection;
     }
 
-    reset() {
+    if (this.y < 0) {
+      this.y = canvas.height;
       this.x = Math.random() * canvas.width;
-      this.y = Math.random() * -canvas.height;
-      this.length = Math.random() * 12 + 4;
-      this.speed = Math.random() * 2 + 1;
-      this.opacity = Math.random() * 0.5 + 0.2;
-    }
-
-    update() {
-      this.y += this.speed;
-      if (this.y > canvas.height) {
-        this.reset();
-      }
-    }
-
-    draw() {
-      const isDark = neonCard.getAttribute('data-theme') === 'dark';
-      const color = isDark ? `rgba(199, 36, 177, ${this.opacity})` : `rgba(255, 42, 133, ${this.opacity})`;
-
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(this.x, this.y);
-      ctx.lineTo(this.x, this.y + this.length);
-      ctx.stroke();
     }
   }
 
-  // Инициализация частиц
-  for (let i = 0; i < 25; i++) {
-    particles.push(new RainParticle());
+  draw() {
+    ctx.fillStyle = this.color;
+    ctx.globalAlpha = this.opacity;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = this.color;
+    ctx.fillRect(this.x, this.y, this.size, this.size);
+    ctx.globalAlpha = 1; 
+    ctx.shadowBlur = 0;  
   }
+}
 
-  function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => {
-      p.update();
-      p.draw();
-    });
-    requestAnimationFrame(animateParticles);
+function initParticles() {
+  particlesArray = [];
+  const numberOfParticles = Math.min(70, (canvas.width * canvas.height) / 200); 
+  for (let i = 0; i < numberOfParticles; i++) {
+    particlesArray.push(new Particle());
   }
-  animateParticles();
+}
 
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < particlesArray.length; i++) {
+    particlesArray[i].update();
+    particlesArray[i].draw();
+  }
+  requestAnimationFrame(animateParticles);
+}
+
+initParticles();
+animateParticles();
   // ============================================
   //   УПРАВЛЕНИЕ ТЕМОЙ (DARK / LIGHT)
   // ============================================
