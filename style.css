@@ -1,0 +1,186 @@
+/* ============================================
+   ПЕРЕМЕННЫЕ И ТЕМЫ (Night City Lounge)
+   ============================================ */
+:root {
+  /* Тёмная тема (Night City - default) */
+  --bg-card: rgba(13, 10, 25, 0.75);
+  --border-neon: rgba(199, 36, 177, 0.4);
+  --text-main: #f3e8ff;
+  --text-accent: #ff2a85;
+  --text-muted: #8b7ca8;
+  --glow-color: rgba(199, 36, 177, 0.6);
+  --glow-secondary: rgba(255, 230, 0, 0.5);
+  --particle-color: rgba(199, 36, 177, 0.5);
+}
+
+[data-theme="light"] {
+  /* Светлая неоновая тема (Sunset Cyberpunk) */
+  --bg-card: rgba(255, 245, 250, 0.82);
+  --border-neon: rgba(255, 42, 133, 0.35);
+  --text-main: #2a113b;
+  --text-accent: #c724b1;
+  --text-muted: #7b6291;
+  --glow-color: rgba(255, 42, 133, 0.3);
+  --glow-secondary: rgba(199, 36, 177, 0.3);
+  --particle-color: rgba(255, 42, 133, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Rajdhani', sans-serif;
+  overflow: hidden;
+}
+
+/* ============================================
+   КАРТОЧКА Виджета (Glassmorphism + Neon)
+   ============================================ */
+.neon-card {
+  position: relative;
+  width: 320px;
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-neon);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    inset 0 0 15px rgba(255, 255, 255, 0.05),
+    0 0 20px var(--glow-color);
+  overflow: hidden;
+  transition: all 0.4s ease;
+  user-select: none;
+}
+
+/* Canvas для частичек/дождя */
+#neon-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+/* ============================================
+   КНОПКИ УПРАВЛЕНИЯ
+   ============================================ */
+.btn-controls {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.hiden-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.hiden-btn svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.hiden-btn:hover {
+  color: var(--text-accent);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
+.hiden-btn.inactive {
+  opacity: 0.4;
+  color: var(--text-muted);
+}
+
+.btn-divider {
+  width: 1px;
+  height: 14px;
+  background: var(--border-neon);
+  opacity: 0.5;
+}
+
+/* Иконки Солнце / Луна */
+[data-theme="dark"] .icon-sun { display: none; }
+[data-theme="dark"] .icon-moon { display: block; }
+[data-theme="light"] .icon-sun { display: block; }
+[data-theme="light"] .icon-moon { display: none; }
+
+/* ============================================
+   ДИСПЛЕЙ ВРЕМЕНИ И ДАТЫ
+   ============================================ */
+.time-display {
+  font-family: 'Orbitron', monospace;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: 2px;
+  text-shadow: 
+    0 0 10px var(--glow-color),
+    0 0 20px var(--glow-secondary);
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.time-separator {
+  color: var(--text-accent);
+  animation: pulse 1.5s infinite;
+  margin: 0 2px;
+}
+
+.seconds {
+  font-size: 1.4rem;
+  color: var(--text-accent);
+  margin-left: 2px;
+  opacity: 0.9;
+  transition: opacity 0.3s ease, display 0.3s ease;
+}
+
+.seconds.hidden {
+  display: none;
+}
+
+.date-display {
+  margin-top: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Анимация пульсации разделителя */
+@keyframes pulse {
+  0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--text-accent); }
+  50% { opacity: 0.3; text-shadow: none; }
+}
