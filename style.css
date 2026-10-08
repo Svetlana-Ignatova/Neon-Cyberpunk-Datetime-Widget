@@ -11,6 +11,8 @@
   --glow-color: rgba(199, 36, 177, 0.6);
   --glow-secondary: rgba(255, 230, 0, 0.5);
   --particle-color: rgba(199, 36, 177, 0.5);
+  --title: "Press Start 2P", system-ui;
+  --main-text: "Tiny5", sans-serif;
 }
 
 [data-theme="light"] {
